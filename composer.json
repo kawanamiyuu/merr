@@ -1,0 +1,15 @@
+{
+    "name": "kawanamiyuu/merr",
+    "description": "PHP Mail Parse Library",
+    "homepage": "https://github.com/kawanamiyuu/merr",
+
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yuu Kawanami"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    }
+}
