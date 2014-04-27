@@ -1,7 +1,10 @@
 Mime-Version: 1.0
-Subject: Test Mail Subject
+Message-ID: <message-id@localhost.localdomain>
+Date: Tue, 01 Apr 2014 12:34:56 +0000 (UTC)
 From: from-name <from-addr@example.com>
-To: to-name <to-addr@example.com>
+To: to-name1 <to-addr1@example.com>,
+  to-name2 <to-addr2@example.com>
+Subject: Test Mail Subject
 Content-Type: text/plain; charset=ASCII
 Content-Transfer-Encoding: 7bit
 

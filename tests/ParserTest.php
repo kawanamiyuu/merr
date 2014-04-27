@@ -1,6 +1,7 @@
 <?php
 
 use Merr\Parser;
+use Zend\Mail\Storage\Part;
 
 class ParserTest extends PHPUnit_Framework_TestCase {
 
@@ -15,13 +16,16 @@ class ParserTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function zend_mail_messageでパース()
+	public function zend_mail_partでパース()
 	{
-		$mail = getTestMail("01.plain_text_ascii.eml");
-		$message = \Zend\Mail\Message::fromString($mail);
-
-		$this->assertInstanceOf("\\Zend\\Mail\\Headers", $message->getHeaders());
-		$this->assertTrue(is_string($message->getBody()));
+		$mail = getTestMail("02.html_text_ascii.eml");
+		$part = new Part(["raw" => $mail]);
+		foreach ($part->getHeaders() as $header) {
+			var_dump($header);
+		}
+		for ($i = 1; $i <= $part->countParts(); $i++) {
+			var_dump($part->getPart($i));
+		}
 	}
 }
  

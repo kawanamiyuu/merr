@@ -1,0 +1,27 @@
+MIME-Version: 1.0
+Message-ID: <message-id@localhost.localdomain>
+Date: Tue, 01 Apr 2014 12:34:56 +0000 (UTC)
+From: from-name <from-addr@example.com>
+To: to-name1 <to-addr1@example.com>,
+  to-name2 <to-addr2@example.com>
+Subject: Html Mail
+Content-Type: multipart/alternative;
+  boundary="===============4096377701313217649=="
+
+--===============4096377701313217649==
+Content-Type: text/plain; charset="ASCII"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+Plain Text
+Plain Text
+Plain Text
+
+--===============4096377701313217649==
+Content-Type: text/html; charset="ASCII"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+<b>Html Text</b><br />=0A<b>Html Text</b><br />=0A<b>Html Text</b>
+
+--===============4096377701313217649==--
