@@ -12,4 +12,12 @@
 		</testsuite>
 	</testsuites>
 
+	<groups>
+		<!--<include>
+			<group>name</group>
+		</include>-->
+		<exclude>
+			<group>ignore</group>
+		</exclude>
+	</groups>
 </phpunit>
