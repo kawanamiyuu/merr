@@ -10,7 +10,9 @@ class ParserTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function インスタンス()
 	{
-		$this->assertInstanceOf("Merr\\Parser", new Parser());
+		$mail = getTestMail("01.plain_text_ascii.eml");
+		$parser = new Parser($mail);
+		$this->assertInstanceOf("Merr\\Parser", $parser);
 	}
 
 	/**
