@@ -13,7 +13,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp()
 	{
-		$raw = getTestMail("02.html_text_ascii.eml");
+		$raw = getTestMail("03.htmltext_inlineimage_attachement.eml");
 		$this->parts = new Part(["raw" => $raw]);
 	}
 
@@ -26,11 +26,31 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 
 		foreach ($this->parts->getHeaders() as $header) {
 			$this->assertInstanceOf("Zend\\Mail\\Header\\HeaderInterface", $header);
+//			var_dump($header);
 		}
 
 		for ($i = 1; $i <= $this->parts->countParts(); $i++) {
 			$part = $this->parts->getPart($i);
 			$this->assertInstanceOf("Zend\\Mail\\Storage\\Part", $part);
+//			var_dump($part->getHeaders());
 		}
+
+		$this->assertTrue($this->parts->isMultipart());
+		$this->assertEquals(3, $this->parts->countParts());
+
+		$related = $this->parts->getPart(1);
+		$this->assertEquals("multipart/related", $related->getHeader("content-type")->getType());
+		$this->assertNotEmpty($related->getHeader("content-type")->getParameter("boundary"));
+		$this->assertTrue($related->hasChildren());
+
+		$attachment1 = $this->parts->getPart(2);
+		$this->assertEquals("image/png", $attachment1->getHeader("content-type")->getType());
+		$this->assertEquals("google.png", $attachment1->getHeader("content-type")->getParameter("name"));
+		$this->assertEquals('attachment; filename="google.png"', $attachment1->getHeader("content-disposition")->getFieldValue());
+
+		$attachment2 = $this->parts->getPart(3);
+		$this->assertEquals("image/png", $attachment2->getHeader("content-type")->getType());
+		$this->assertEquals("blogger.png", $attachment2->getHeader("content-type")->getParameter("name"));
+		$this->assertEquals('attachment; filename="blogger.png"', $attachment2->getHeader("content-disposition")->getFieldValue());
 	}
 }
