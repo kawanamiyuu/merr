@@ -20,7 +20,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function インスタンス()
+	public function parse()
 	{
 		$this->assertInstanceOf("Zend\\Mail\\Storage\\Part", $this->parts);
 
@@ -38,19 +38,46 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($this->parts->isMultipart());
 		$this->assertEquals(3, $this->parts->countParts());
 
-		$related = $this->parts->getPart(1);
-		$this->assertEquals("multipart/related", $related->getHeader("content-type")->getType());
-		$this->assertNotEmpty($related->getHeader("content-type")->getParameter("boundary"));
-		$this->assertTrue($related->hasChildren());
+		{
+			$related = $this->parts->getPart(1);
+			$this->assertEquals("multipart/related", $related->getHeader("content-type")->getType());
+			$this->assertNotEmpty($related->getHeader("content-type")->getParameter("boundary"));
+			$this->assertTrue($related->hasChildren());
 
-		$attachment1 = $this->parts->getPart(2);
-		$this->assertEquals("image/png", $attachment1->getHeader("content-type")->getType());
-		$this->assertEquals("google.png", $attachment1->getHeader("content-type")->getParameter("name"));
-		$this->assertEquals('attachment; filename="google.png"', $attachment1->getHeader("content-disposition")->getFieldValue());
+			$this->assertTrue($related->isMultipart());
+			$this->assertEquals(3, $related->countParts());
 
-		$attachment2 = $this->parts->getPart(3);
-		$this->assertEquals("image/png", $attachment2->getHeader("content-type")->getType());
-		$this->assertEquals("blogger.png", $attachment2->getHeader("content-type")->getParameter("name"));
-		$this->assertEquals('attachment; filename="blogger.png"', $attachment2->getHeader("content-disposition")->getFieldValue());
+			$alternative = $related->getPart(1);
+			$this->assertEquals("multipart/alternative", $alternative->getHeader("content-type")->getType());
+
+			$inline1 = $related->getPart(2);
+			$this->assertEquals('inline; filename="twitter.png"', $inline1->getHeader("content-disposition")->getFieldValue());
+			$this->assertEquals("image/png", $inline1->getHeader("content-type")->getType());
+			$this->assertEquals("twitter.png", $inline1->getHeader("content-type")->getParameter("name"));
+			$this->assertEquals("base64", $inline1->getHeader("content-transfer-encoding")->getFieldValue());
+
+			$inline2 = $related->getPart(3);
+			$this->assertEquals('inline; filename="facebook.png"', $inline2->getHeader("content-disposition")->getFieldValue());
+			$this->assertEquals("image/png", $inline2->getHeader("content-type")->getType());
+			$this->assertEquals("facebook.png", $inline2->getHeader("content-type")->getParameter("name"));
+			$this->assertEquals("base64", $inline2->getHeader("content-transfer-encoding")->getFieldValue());
+
+		}
+
+		{
+			$attachment1 = $this->parts->getPart(2);
+			$this->assertEquals('attachment; filename="google.png"', $attachment1->getHeader("content-disposition")->getFieldValue());
+			$this->assertEquals("image/png", $attachment1->getHeader("content-type")->getType());
+			$this->assertEquals("google.png", $attachment1->getHeader("content-type")->getParameter("name"));
+			$this->assertEquals("base64", $attachment1->getHeader("content-transfer-encoding")->getFieldValue());
+		}
+
+		{
+			$attachment2 = $this->parts->getPart(3);
+			$this->assertEquals('attachment; filename="blogger.png"', $attachment2->getHeader("content-disposition")->getFieldValue());
+			$this->assertEquals("image/png", $attachment2->getHeader("content-type")->getType());
+			$this->assertEquals("blogger.png", $attachment2->getHeader("content-type")->getParameter("name"));
+			$this->assertEquals("base64", $attachment2->getHeader("content-transfer-encoding")->getFieldValue());
+		}
 	}
 }
