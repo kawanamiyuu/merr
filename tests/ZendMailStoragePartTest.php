@@ -4,8 +4,8 @@ use Zend\Mail\Storage\Part;
 /**
  * Zend\Mail\Storage\Part の挙動確認用
  */
-class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
-
+class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase
+{
 	/**
 	 * @var Part part
 	 */
@@ -24,16 +24,14 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 	{
 		$this->assertInstanceOf("Zend\\Mail\\Storage\\Part", $this->parts);
 
-		foreach ($this->parts->getHeaders() as $header) {
-			$this->assertInstanceOf("Zend\\Mail\\Header\\HeaderInterface", $header);
-//			var_dump($header);
-		}
+		$this->assertEquals("1.0", $this->parts->getHeader("mime-version")->getFieldValue());
+		$this->assertEquals("Mon, 28 Apr 2014 20:54:57 +0900", $this->parts->getHeader("date")->getFieldValue());
+		$this->assertEquals("<CADHfj_GHVHvgPXYqqBAJEdG+zTsCM299CfnTr-N3sXLsRTQe4g@example.com>", $this->parts->getHeader("message-id")->getFieldValue());
+		$this->assertEquals("テストメールの件名", $this->parts->getHeader("subject")->getFieldValue());
+		$this->assertEquals("送信者(From)の名前 <from-addr@example.com>", $this->parts->getHeader("from")->getFieldValue());
+		$this->assertEquals("宛先(To)の名前 <to-addr@example.com>", $this->parts->getHeader("to")->getFieldValue());
 
-		for ($i = 1; $i <= $this->parts->countParts(); $i++) {
-			$part = $this->parts->getPart($i);
-			$this->assertInstanceOf("Zend\\Mail\\Storage\\Part", $part);
-//			var_dump($part->getHeaders());
-		}
+		$this->assertEquals("multipart/mixed", $this->parts->getHeader("content-type")->getType());
 
 		$this->assertTrue($this->parts->isMultipart());
 		$this->assertEquals(3, $this->parts->countParts());
@@ -57,12 +55,14 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 					$this->assertEquals("text/plain", $plainText->getHeader("content-type")->getType());
 					$this->assertEquals("ISO-2022-JP", $plainText->getHeader("content-type")->getParameter("charset"));
 					$this->assertEquals("7bit", $plainText->getHeader("content-transfer-encoding")->getFieldValue());
+					$this->assertNotEmpty($plainText->getContent());
 				}
 				{
 					$htmlText = $alternative->getPart(2);
 					$this->assertEquals("text/html", $htmlText->getHeader("content-type")->getType());
 					$this->assertEquals("ISO-2022-JP", $htmlText->getHeader("content-type")->getParameter("charset"));
 					$this->assertEquals("base64", $htmlText->getHeader("content-transfer-encoding")->getFieldValue());
+					$this->assertNotEmpty($htmlText->getContent());
 				}
 			}
 			{
@@ -71,6 +71,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 				$this->assertEquals("image/png", $inline1->getHeader("content-type")->getType());
 				$this->assertEquals("twitter.png", $inline1->getHeader("content-type")->getParameter("name"));
 				$this->assertEquals("base64", $inline1->getHeader("content-transfer-encoding")->getFieldValue());
+				$this->assertNotEmpty($inline1->getContent());
 			}
 			{
 				$inline2 = $related->getPart(3);
@@ -78,6 +79,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 				$this->assertEquals("image/png", $inline2->getHeader("content-type")->getType());
 				$this->assertEquals("facebook.png", $inline2->getHeader("content-type")->getParameter("name"));
 				$this->assertEquals("base64", $inline2->getHeader("content-transfer-encoding")->getFieldValue());
+				$this->assertNotEmpty($inline2->getContent());
 			}
 		}
 		{
@@ -86,6 +88,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 			$this->assertEquals("image/png", $attachment1->getHeader("content-type")->getType());
 			$this->assertEquals("google.png", $attachment1->getHeader("content-type")->getParameter("name"));
 			$this->assertEquals("base64", $attachment1->getHeader("content-transfer-encoding")->getFieldValue());
+			$this->assertNotEmpty($attachment1->getContent());
 		}
 		{
 			$attachment2 = $this->parts->getPart(3);
@@ -93,6 +96,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase {
 			$this->assertEquals("image/png", $attachment2->getHeader("content-type")->getType());
 			$this->assertEquals("blogger.png", $attachment2->getHeader("content-type")->getParameter("name"));
 			$this->assertEquals("base64", $attachment2->getHeader("content-transfer-encoding")->getFieldValue());
+			$this->assertNotEmpty($attachment2->getContent());
 		}
 	}
 }
