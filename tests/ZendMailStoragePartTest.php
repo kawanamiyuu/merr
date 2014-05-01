@@ -71,6 +71,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase
 				$this->assertEquals("image/png", $inline1->getHeader("content-type")->getType());
 				$this->assertEquals("twitter.png", $inline1->getHeader("content-type")->getParameter("name"));
 				$this->assertEquals("base64", $inline1->getHeader("content-transfer-encoding")->getFieldValue());
+				$this->assertEquals("<ii_145a82f8d1abc6fd>", $inline1->getHeader("content-id")->getFieldValue());
 				$this->assertNotEmpty($inline1->getContent());
 			}
 			{
@@ -79,6 +80,7 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase
 				$this->assertEquals("image/png", $inline2->getHeader("content-type")->getType());
 				$this->assertEquals("facebook.png", $inline2->getHeader("content-type")->getParameter("name"));
 				$this->assertEquals("base64", $inline2->getHeader("content-transfer-encoding")->getFieldValue());
+				$this->assertEquals("<ii_145a82ec4f0639fc>", $inline2->getHeader("content-id")->getFieldValue());
 				$this->assertNotEmpty($inline2->getContent());
 			}
 		}
