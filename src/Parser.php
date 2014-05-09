@@ -2,15 +2,13 @@
 
 namespace Merr;
 
+use Merr\Part\AttachmentPart;
+use Merr\Part\InlineImagePart;
+use Merr\Part\TextPart;
 use Zend\Mail\Storage\Part;
 
-class Parser {
-
-	/**
-	 * @var Part parts
-	 */
-	private $parts;
-
+class Parser
+{
 	/**
 	 * Constructor
 	 *
@@ -26,24 +24,37 @@ class Parser {
 		$parts = new Part(["raw" => $rawMessage]);
 	}
 
-	public function getHeader($name)
+	/**
+	 * @param string $fieldName header field name
+	 * @return mixed
+	 */
+	public function getHeader($fieldName)
 	{
 		// TODO 実装
 		return null;
 	}
 
+	/**
+	 * @return TextPart text/plain part
+	 */
 	public function getPlainTextPart()
 	{
 		// TODO 実装
 		return null;
 	}
 
+	/**
+	 * @return TextPart text/html part
+	 */
 	public function getHtmlTextPart()
 	{
 		// TODO 実装
 		return null;
 	}
 
+	/**
+	 * @return AttachmentPart[] array of attachment part
+	 */
 	public function getAttachmentParts()
 	{
 		// TODO 実装
@@ -51,30 +62,45 @@ class Parser {
 
 	}
 
+	/**
+	 * @return InlineImagePart[] array of inline image part
+	 */
 	public function getInlineImageParts()
 	{
 		// TODO 実装
 		return null;
 	}
 
+	/**
+	 * @return bool whether this message has text/plain part
+	 */
 	public function hasPlainTextPart()
 	{
 		// TODO 実装
 		return false;
 	}
 
+	/**
+	 * @return bool whether this message has text/html part
+	 */
 	public function hasHtmlTextPart()
 	{
 		// TODO 実装
 		return false;
 	}
 
+	/**
+	 * @return bool whether this message has attachment part
+	 */
 	public function hasAttachmentPart()
 	{
 		// TODO 実装
 		return false;
 	}
 
+	/**
+	 * @return bool whether this message has inline image part
+	 */
 	public function hasInlineImagePart()
 	{
 		// TODO 実装
