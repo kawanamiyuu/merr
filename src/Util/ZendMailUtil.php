@@ -60,6 +60,7 @@ final class ZendMailUtil
 		// TODO Zend\Mine\Decode::splitHeaderField が使えそう
 		list($disposition, $filename) = explode(";", $contentDisposition);
 		$disposition = strtolower($disposition);
+		// TODO content-typeのnameパラメータの考慮
 		$filename = trim(explode("=", $filename)[1], " \"'");
 
 		if ($disposition === "inline") {
@@ -101,6 +102,7 @@ final class ZendMailUtil
 		// TODO Zend\Mine\Decode::splitHeaderField が使えそう
 		list($disposition, $filename) = explode(";", $contentDisposition);
 		$disposition = strtolower($disposition);
+		// TODO content-typeのnameパラメータの考慮
 		$filename = trim(explode("=", $filename)[1], " \"'");
 
 		if ($disposition !== "inline") {
@@ -130,6 +132,7 @@ final class ZendMailUtil
 		$inlineImagePart->setContentType($type);
 		$inlineImagePart->setContentTransferEncoding($transferEncoding);
 		$inlineImagePart->setContentDisposition($disposition);
+		$inlineImagePart->setFilename($filename);
 		$inlineImagePart->setContentId($contentId);
 
 		return $inlineImagePart;

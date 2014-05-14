@@ -87,6 +87,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("image/png", $inlineImagePart->getContentType());
 		$this->assertEquals("base64", $inlineImagePart->getContentTransferEncoding());
 		$this->assertEquals("inline", $inlineImagePart->getContentDisposition());
+		$this->assertEquals("twitter.png", $inlineImagePart->getFilename());
 		$this->assertEquals("ii_145a82f8d1abc6fd", $inlineImagePart->getContentId());
 		$this->assertNotEmpty($inlineImagePart->getContent());
 	}

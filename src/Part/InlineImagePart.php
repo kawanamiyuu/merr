@@ -11,6 +11,12 @@ class InlineImagePart extends AbstractPart
 	private $contentDisposition;
 
 	/**
+	 * @var string file name
+	 */
+	private $filename;
+
+
+	/**
 	 * @var string content-id
 	 */
 	private $contentId;
@@ -29,6 +35,22 @@ class InlineImagePart extends AbstractPart
 	public function getContentDisposition()
 	{
 		return $this->contentDisposition;
+	}
+
+	/**
+	 * @param string $filename file name
+	 */
+	public function setFilename($filename)
+	{
+		$this->filename = $filename;
+	}
+
+	/**
+	 * @return string file name
+	 */
+	public function getFilename()
+	{
+		return $this->filename;
 	}
 
 	/**
