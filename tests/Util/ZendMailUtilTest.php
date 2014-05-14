@@ -36,19 +36,13 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function convertTextPart_not_text_part()
 	{
 		$attachment1 = $this->parts->getPart(2);
 
-		try {
-			$textPart = ZendMailUtil::convertTextPart($attachment1);
-			$this->fail();
-		} catch (\InvalidArgumentException $e) {
-			$this->assertTrue(true);
-		} catch (\Exception $e) {
-			$this->fail();
-		}
+		$textPart = ZendMailUtil::convertTextPart($attachment1);
 	}
 
 	/**
@@ -69,20 +63,14 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function convertAttachmentPart_not_attachment_but_inline()
 	{
 		$related = $this->parts->getPart(1);
 		$inline1 = $related->getPart(2);
 
-		try {
-			$attachmentPart = ZendMailUtil::convertAttachmentPart($inline1);
-			$this->fail();
-		} catch (\InvalidArgumentException $e) {
-			$this->assertTrue(true);
-		} catch (\Exception $e) {
-			$this->fail();
-		}
+		$attachmentPart = ZendMailUtil::convertAttachmentPart($inline1);
 	}
 
 	/**
@@ -104,19 +92,13 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function convertInlineImagePart_not_inline_part()
 	{
 		$attachment1 = $this->parts->getPart(2);
 
-		try {
-			$inlineImagePart = ZendMailUtil::convertInlineImagePart($attachment1);
-			$this->fail();
-		} catch (\InvalidArgumentException $e) {
-			$this->assertTrue(true);
-		} catch (\Exception $e) {
-			$this->fail();
-		}
+		$inlineImagePart = ZendMailUtil::convertInlineImagePart($attachment1);
 	}
 }
  
