@@ -22,6 +22,30 @@ class Parser
 		}
 
 		$parts = new Part(["raw" => $rawMessage]);
+
+		for ($i = 1; $i <= $parts->countParts(); $i++) {
+			if ($parts->isMultipart()) {
+
+			} else {
+				$part = $parts->getPart($i);
+				$contentType = $part->getHeader("content-type")->getType();
+				$contentType = strtolower($contentType);
+				list($mainType, $subType) = explode("/", $contentType);
+				if ($mainType === "text") {
+					switch ($subType) {
+						case "plain":
+							break;
+						case "html":
+							break;
+						default:
+							// サブタイプが不明な場合、添付ファイルとして扱う
+					}
+				} else {
+					// 添付ファイル
+
+				}
+			}
+		}
 	}
 
 	/**

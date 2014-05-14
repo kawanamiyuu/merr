@@ -43,6 +43,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	{
 		$attachment1 = $this->parts->getPart(2);
 
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$textPart = ZendMailUtil::convertTextPart($attachment1);
 	}
 
@@ -71,6 +72,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 		$related = $this->parts->getPart(1);
 		$inline1 = $related->getPart(2);
 
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$attachmentPart = ZendMailUtil::convertAttachmentPart($inline1);
 	}
 
@@ -100,6 +102,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	{
 		$attachment1 = $this->parts->getPart(2);
 
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$inlineImagePart = ZendMailUtil::convertInlineImagePart($attachment1);
 	}
 }
