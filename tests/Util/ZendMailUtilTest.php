@@ -1,5 +1,6 @@
 <?php
 
+use Merr\Exception\InvalidArgumentException;
 use Merr\Util\ZendMailUtil;
 use Zend\Mail\Storage\Part;
 
@@ -36,7 +37,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException InvalidArgumentException
 	 */
 	public function convertTextPart_not_text_part()
 	{
@@ -63,7 +64,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException InvalidArgumentException
 	 */
 	public function convertAttachmentPart_not_attachment_but_inline()
 	{
@@ -92,7 +93,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException InvalidArgumentException
 	 */
 	public function convertInlineImagePart_not_inline_part()
 	{

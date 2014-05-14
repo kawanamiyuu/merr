@@ -2,6 +2,7 @@
 
 namespace Merr\Util;
 
+use Merr\Exception\InvalidArgumentException;
 use Merr\Part\AttachmentPart;
 use Merr\Part\InlineImagePart;
 use Merr\Part\TextPart;
@@ -23,7 +24,7 @@ final class ZendMailUtil
 
 		list($mainType, ) = explode("/", $type);
 		if ($mainType !== "text") {
-			throw new \InvalidArgumentException("this is not text/* part. (actual: " . $type . ")");
+			throw new InvalidArgumentException("this is not text/* part. (actual: " . $type . ")");
 		}
 
 		/** @var ContentTransferEncoding $contentTransferEncoding */
@@ -62,7 +63,7 @@ final class ZendMailUtil
 		$filename = trim(explode("=", $filename)[1], " \"'");
 
 		if ($disposition === "inline") {
-			throw new \InvalidArgumentException("this is inline image part.");
+			throw new InvalidArgumentException("this is inline image part.");
 		}
 
 		/** @var ContentType $contentType */
@@ -103,7 +104,7 @@ final class ZendMailUtil
 		$filename = trim(explode("=", $filename)[1], " \"'");
 
 		if ($disposition !== "inline") {
-			throw new \InvalidArgumentException("this is not inline image part. (actual: " . $disposition . ")");
+			throw new InvalidArgumentException("this is not inline image part. (actual: " . $disposition . ")");
 		}
 
 		/** @var ContentType $contentType */
