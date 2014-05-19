@@ -1,10 +1,11 @@
 <?php
 use Zend\Mail\Storage\Part;
+use Zend\Mime\Decode;
 
 /**
  * Zend\Mail\Storage\Part の挙動確認用
  */
-class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase
+class ZendTest extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var Part part
@@ -100,5 +101,16 @@ class ZendMailStoragePartTest extends PHPUnit_Framework_TestCase
 			$this->assertEquals("base64", $attachment2->getHeader("content-transfer-encoding")->getFieldValue());
 			$this->assertNotEmpty($attachment2->getContent());
 		}
+	}
+
+	/**
+	 * @test
+	 */
+	public function ZendMimeDecode_splitHeaderField()
+	{
+		$ret = Decode::splitHeaderField('value; pName1="pValue1"; pName2="pValue2"');
+		$this->assertEquals("value", $ret[0]);
+		$this->assertEquals("pValue1", $ret["pname1"]);
+		$this->assertEquals("pValue2", $ret["pname2"]);
 	}
 }

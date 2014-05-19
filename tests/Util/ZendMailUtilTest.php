@@ -1,109 +1,77 @@
 <?php
 
-use Merr\Exception\InvalidArgumentException;
+use Merr\Part\GenericPart;
 use Merr\Util\ZendMailUtil;
-use Zend\Mail\Storage\Part;
+use Zend\Mail\Storage\Part as ZfPart;
 
 class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 {
 
 	/**
-	 * @var Part
+	 * @var ZfPart
 	 */
 	private $parts;
 
 	public function setUp()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachement.eml");
-		$this->parts = new Part(["raw" => $raw]);
+		$this->parts = new ZfPart(["raw" => $raw]);
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertTextPart_ok()
+	public function convertGenericPart_textPart()
 	{
 		$related = $this->parts->getPart(1);
 		$alternative = $related->getPart(1);
 		$plainText = $alternative->getPart(1);
 
-		$textPart = ZendMailUtil::convertTextPart($plainText);
+		$part = ZendMailUtil::convertGenericPart($plainText);
 
-		$this->assertEquals("text/plain", $textPart->getContentType());
-		$this->assertEquals("7bit", $textPart->getContentTransferEncoding());
-		$this->assertEquals("iso-2022-jp", $textPart->getCharset());
-		$this->assertNotEmpty($textPart->getContent());
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 */
-	public function convertTextPart_not_text_part()
-	{
-		$attachment1 = $this->parts->getPart(2);
-
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$textPart = ZendMailUtil::convertTextPart($attachment1);
+		$this->assertNotEmpty($part->getContent());
+		$this->assertEquals("text/plain", $part->getContentType()->getType());
+		$this->assertEquals("ISO-2022-JP", $part->getContentType()->getParameter("charset"));
+		$this->assertEquals("7bit", $part->getContentTransferEncoding()->getTransferEncoding());
+		$this->assertEquals(null, $part->getContentDisposition()->getDisposition());
+		$this->assertEquals(null, $part->getContentId()->getId());
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertAttachmentPart_ok()
-	{
-		$attachment1 = $this->parts->getPart(2);
-
-		$attachmentPart = ZendMailUtil::convertAttachmentPart($attachment1);
-
-		$this->assertEquals("image/png", $attachmentPart->getContentType());
-		$this->assertEquals("base64", $attachmentPart->getContentTransferEncoding());
-		$this->assertEquals("attachment", $attachmentPart->getContentDisposition());
-		$this->assertEquals("google.png", $attachmentPart->getFilename());
-		$this->assertNotEmpty($attachmentPart->getContent());
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 */
-	public function convertAttachmentPart_not_attachment_but_inline()
+	public function convertGenericPart_inlineImagePart()
 	{
 		$related = $this->parts->getPart(1);
-		$inline1 = $related->getPart(2);
+		$inlineImagePart = $related->getPart(2);
 
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$attachmentPart = ZendMailUtil::convertAttachmentPart($inline1);
+		$part = ZendMailUtil::convertGenericPart($inlineImagePart);
+
+		$this->assertNotEmpty($part->getContent());
+		$this->assertEquals("image/png", $part->getContentType()->getType());
+		$this->assertEquals("twitter.png", $part->getContentType()->getParameter("name"));
+		$this->assertEquals("base64", $part->getContentTransferEncoding()->getTransferEncoding());
+		$this->assertEquals("inline", $part->getContentDisposition()->getDisposition());
+		$this->assertEquals("twitter.png", $part->getContentDisposition()->getParameter("filename"));
+		$this->assertEquals("ii_145a82f8d1abc6fd", $part->getContentId()->getId());
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertInlineImagePart_ok()
+	public function convertGenericPart_attachmentPart()
 	{
-		$related = $this->parts->getPart(1);
-		$inline1 = $related->getPart(2);
+		$attachmentPart = $this->parts->getPart(2);
 
-		$inlineImagePart = ZendMailUtil::convertInlineImagePart($inline1);
+		$part = ZendMailUtil::convertGenericPart($attachmentPart);
 
-		$this->assertEquals("image/png", $inlineImagePart->getContentType());
-		$this->assertEquals("base64", $inlineImagePart->getContentTransferEncoding());
-		$this->assertEquals("inline", $inlineImagePart->getContentDisposition());
-		$this->assertEquals("twitter.png", $inlineImagePart->getFilename());
-		$this->assertEquals("ii_145a82f8d1abc6fd", $inlineImagePart->getContentId());
-		$this->assertNotEmpty($inlineImagePart->getContent());
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 */
-	public function convertInlineImagePart_not_inline_part()
-	{
-		$attachment1 = $this->parts->getPart(2);
-
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$inlineImagePart = ZendMailUtil::convertInlineImagePart($attachment1);
+		$this->assertNotEmpty($part->getContent());
+		$this->assertEquals("image/png", $part->getContentType()->getType());
+		$this->assertEquals("google.png", $part->getContentType()->getParameter("name"));
+		$this->assertEquals("base64", $part->getContentTransferEncoding()->getTransferEncoding());
+		$this->assertEquals("attachment", $part->getContentDisposition()->getDisposition());
+		$this->assertEquals("google.png", $part->getContentDisposition()->getParameter("filename"));
+		$this->assertEquals(null, $part->getContentId()->getId());
 	}
 }
  

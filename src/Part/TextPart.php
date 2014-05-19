@@ -3,26 +3,59 @@
 namespace Merr\Part;
 
 
-class TextPart extends AbstractPart
+use Merr\Header\ContentType;
+
+class TextPart
 {
 	/**
-	 * @var string charset
+	 * @var GenericPart
 	 */
-	private $charset;
+	private $part;
 
 	/**
-	 * @param string $charset charset
+	 * @param GenericPart $part GenericPart
 	 */
-	public function setCharset($charset)
+	public function __construct(GenericPart $part = null)
 	{
-		$this->charset = $charset;
+		if ($part !== null) {
+			$this->part = $part;
+
+		} else {
+			$this->part = new GenericPart();
+		}
 	}
 
 	/**
-	 * @return string charset
+	 * @param string $content text content
 	 */
-	public function getCharset()
+	public function setContent($content)
 	{
-		return $this->charset;
+		$this->part->setContent($content);
+	}
+
+	/**
+	 * @return string text content
+	 */
+	public function getContent()
+	{
+		return $this->part->getContent();
+	}
+
+	/**
+	 * @param string $type content-type
+	 */
+	public function setContentType($type)
+	{
+		$contentType = new ContentType();
+		$contentType->setType($type);
+		$this->part->setContentType($type);
+	}
+
+	/**
+	 * @return string content-type
+	 */
+	public function getContentType()
+	{
+		return $this->part->getContentType()->getType();
 	}
 }

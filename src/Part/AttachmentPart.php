@@ -3,32 +3,61 @@
 namespace Merr\Part;
 
 
-class AttachmentPart extends AbstractPart
+use Merr\Header\ContentDisposition;
+use Merr\Header\ContentType;
+
+class AttachmentPart
 {
 	/**
-	 * @var string content-disposition
+	 * @var GenericPart
 	 */
-	private $contentDisposition;
+	private $part;
 
 	/**
-	 * @var string file name
+	 * @param GenericPart $part GenericPart
 	 */
-	private $filename;
-
-	/**
-	 * @param string $contentDisposition content-disposition
-	 */
-	public function setContentDisposition($contentDisposition)
+	public function __construct(GenericPart $part = null)
 	{
-		$this->contentDisposition = $contentDisposition;
+		if ($part !== null) {
+			$this->part = $part;
+
+		} else {
+			$this->part = new GenericPart();
+		}
 	}
 
 	/**
-	 * @return string content-disposition
+	 * @param string $content attachment content
 	 */
-	public function getContentDisposition()
+	public function setContent($content)
 	{
-		return $this->contentDisposition;
+		$this->part->setContent($content);
+	}
+
+	/**
+	 * @return string attachment content
+	 */
+	public function getContent()
+	{
+		return $this->part->getContent();
+	}
+
+	/**
+	 * @param string $type content-type
+	 */
+	public function setContentType($type)
+	{
+		$contentType = new ContentType();
+		$contentType->setType($type);
+		$this->part->setContentType($type);
+	}
+
+	/**
+	 * @return string content-type
+	 */
+	public function getContentType()
+	{
+		return $this->part->getContentType()->getType();
 	}
 
 	/**
@@ -36,7 +65,9 @@ class AttachmentPart extends AbstractPart
 	 */
 	public function setFilename($filename)
 	{
-		$this->filename = $filename;
+		$contentDisposition = new ContentDisposition();
+		$contentDisposition->addParameter("filename", $filename);
+		$this->part->setContentDisposition($contentDisposition);
 	}
 
 	/**
@@ -44,6 +75,6 @@ class AttachmentPart extends AbstractPart
 	 */
 	public function getFilename()
 	{
-		return $this->filename;
+		return $this->part->getContentDisposition()->getParameter("filename");
 	}
 } 

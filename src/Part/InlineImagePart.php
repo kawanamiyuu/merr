@@ -3,38 +3,63 @@
 namespace Merr\Part;
 
 
-class InlineImagePart extends AbstractPart
+use Merr\Header\ContentDisposition;
+use Merr\Header\ContentId;
+use Merr\Header\ContentType;
+
+class InlineImagePart
 {
-	/**
-	 * @var string content-disposition
-	 */
-	private $contentDisposition;
 
 	/**
-	 * @var string file name
+	 * @var GenericPart
 	 */
-	private $filename;
-
-
-	/**
-	 * @var string content-id
-	 */
-	private $contentId;
+	private $part;
 
 	/**
-	 * @param string $contentDisposition content-disposition
+	 * @param GenericPart $part GenericPart
 	 */
-	public function setContentDisposition($contentDisposition)
+	public function __construct(GenericPart $part = null)
 	{
-		$this->contentDisposition = $contentDisposition;
+		if ($part !== null) {
+			$this->part = $part;
+
+		} else {
+			$this->part = new GenericPart();
+		}
 	}
 
 	/**
-	 * @return string content-disposition
+	 * @param string $content inline image content
 	 */
-	public function getContentDisposition()
+	public function setContent($content)
 	{
-		return $this->contentDisposition;
+		$this->part->setContent($content);
+	}
+
+	/**
+	 * @return string inline image content
+	 */
+	public function getContent()
+	{
+		return $this->part->getContent();
+	}
+
+	/**
+	 * @param string $type content-type
+	 */
+	public function setContentType($type)
+	{
+		$contentType = new ContentType();
+		$contentType->setType($type);
+		$this->part->setContentType($type);
+	}
+
+	/**
+	 * @return string content-type
+	 */
+	public function getContentType()
+	{
+		return $this->part->getContentType()->getType();
 	}
 
 	/**
@@ -42,7 +67,9 @@ class InlineImagePart extends AbstractPart
 	 */
 	public function setFilename($filename)
 	{
-		$this->filename = $filename;
+		$contentDisposition = new ContentDisposition();
+		$contentDisposition->addParameter("filename", $filename);
+		$this->part->setContentDisposition($contentDisposition);
 	}
 
 	/**
@@ -50,21 +77,23 @@ class InlineImagePart extends AbstractPart
 	 */
 	public function getFilename()
 	{
-		return $this->filename;
+		return $this->part->getContentDisposition()->getParameter("filename");
 	}
 
 	/**
 	 * @param string $contentId content-id
 	 */
-	public function setContentId($contentId)
+	public function setContentId($id)
 	{
-		$this->contentId = $contentId;
+		$contentId = new ContentId();
+		$contentId->setId($id);
+		$this->part->setContentId($contentId);
 	}
 	/**
 	 * @return string content-id
 	 */
 	public function getContentId()
 	{
-		return $this->contentId;
+		return $this->part->getContentId()->getId();
 	}
 } 
