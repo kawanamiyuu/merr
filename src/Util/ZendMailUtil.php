@@ -2,6 +2,7 @@
 
 namespace Merr\Util;
 
+use Merr\Exception\InvalidArgumentException;
 use Merr\Header\ContentDisposition;
 use Merr\Header\ContentId;
 use Merr\Header\ContentTransferEncoding;
@@ -20,6 +21,10 @@ final class ZendMailUtil
 	 */
 	public static function convertGenericPart(ZfPart $zfPart)
 	{
+		if ($zfPart->isMultipart()) {
+			throw new InvalidArgumentException("this part is multipart.");
+		}
+
 		// Content-Type
 		$contentType = new ContentType();
 		if ($zfPart->getHeaders()->has("content-type")) {
@@ -83,5 +88,28 @@ final class ZendMailUtil
 		$part->setContentId($contentId);
 
 		return $part;
+	}
+
+	/**
+	 * @param ZfPart $zfPart
+	 * @return GenericPart[]
+	 */
+	public static function convertGenericPartRecursively(ZfPart $zfPart)
+	{
+		$retParts = [];
+
+		$recursive = function(ZfPart $zfPart, &$retParts) use (&$recursive) {
+			if ($zfPart->isMultipart()) {
+				for ($i = 1; $i <= $zfPart->countParts(); $i++) {
+					$recursive($zfPart->getPart($i), $retParts);
+				}
+			} else {
+				$retParts[] = self::convertGenericPart($zfPart);
+			}
+		};
+
+		$recursive($zfPart, $retParts);
+
+		return $retParts;
 	}
 } 

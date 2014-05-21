@@ -73,5 +73,14 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("google.png", $part->getContentDisposition()->getParameter("filename"));
 		$this->assertEquals(null, $part->getContentId()->getId());
 	}
+
+	/**
+	 * @test
+	 */
+	public function convertGenericPartRecursively()
+	{
+		$parts = ZendMailUtil::convertGenericPartRecursively($this->parts);
+		$this->assertCount(6, $parts);
+	}
 }
  
