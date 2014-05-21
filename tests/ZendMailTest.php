@@ -106,6 +106,15 @@ class ZendTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
+	public function recursive()
+	{
+		$rii = new \RecursiveIteratorIterator($this->parts, RecursiveIteratorIterator::LEAVES_ONLY);
+		$this->assertCount(6, $rii);
+	}
+
+	/**
+	 * @test
+	 */
 	public function ZendMimeDecode_splitHeaderField()
 	{
 		$ret = Decode::splitHeaderField('value; pName1="pValue1"; pName2="pValue2"');
