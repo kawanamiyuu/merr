@@ -2,13 +2,21 @@
 
 namespace Merr;
 
+use Merr\Exception\InvalidArgumentException;
 use Merr\Part\AttachmentPart;
+use Merr\Part\GenericPartIterator;
 use Merr\Part\InlineImagePart;
 use Merr\Part\TextPart;
-use Zend\Mail\Storage\Part;
+use Merr\Util\ZendMailUtil;
+use Zend\Mail\Storage\Part as ZfPart;
 
 class Parser
 {
+	/**
+	 * @var GenericPartIterator
+	 */
+	private $parts;
+
 	/**
 	 * Constructor
 	 *
@@ -18,34 +26,13 @@ class Parser
 	{
 		// TODO リソース型も許容する？
 		if (!is_string($rawMessage)) {
-			throw new \InvalidArgumentException("argument must be string.");
+			throw new InvalidArgumentException("argument must be string.");
 		}
 
-		$parts = new Part(["raw" => $rawMessage]);
+		$zfPart = new ZfPart(["raw" => $rawMessage]);
+		$parts = ZendMailUtil::convertGenericPartRecursively($zfPart);
 
-		for ($i = 1; $i <= $parts->countParts(); $i++) {
-			if ($parts->isMultipart()) {
-
-			} else {
-				$part = $parts->getPart($i);
-				$contentType = $part->getHeader("content-type")->getType();
-				$contentType = strtolower($contentType);
-				list($mainType, $subType) = explode("/", $contentType);
-				if ($mainType === "text") {
-					switch ($subType) {
-						case "plain":
-							break;
-						case "html":
-							break;
-						default:
-							// サブタイプが不明な場合、添付ファイルとして扱う
-					}
-				} else {
-					// 添付ファイル
-
-				}
-			}
-		}
+		$this->parts = new GenericPartIterator($parts);
 	}
 
 	/**
@@ -58,26 +45,49 @@ class Parser
 		return null;
 	}
 
+	public function getParts(callable $callback = null)
+	{
+		if ($callback === null) {
+			$ret = $this->parts;
+			$empty = [];
+			$this->parts = new GenericPartIterator($empty);
+			return $ret;
+
+		} else {
+			$ret = [];
+			while ($this->parts->valid()) {
+				if ($callback($this->parts->current())) {
+					$ret[] = $this->parts->current();
+					$this->parts->remove();
+				}
+				$this->parts->next();
+			}
+			$this->parts->rewind();
+
+			return new GenericPartIterator($ret);
+		}
+	}
+
 	/**
-	 * @return TextPart text/plain part
+	 * @return TextPart[] plain text parts
 	 */
-	public function getPlainTextPart()
+	public function getPlainTextParts()
 	{
 		// TODO 実装
 		return null;
 	}
 
 	/**
-	 * @return TextPart text/html part
+	 * @return TextPart[] html text parts
 	 */
-	public function getHtmlTextPart()
+	public function getHtmlTextParts()
 	{
 		// TODO 実装
 		return null;
 	}
 
 	/**
-	 * @return AttachmentPart[] array of attachment part
+	 * @return AttachmentPart[] attachment parts
 	 */
 	public function getAttachmentParts()
 	{
@@ -87,7 +97,7 @@ class Parser
 	}
 
 	/**
-	 * @return InlineImagePart[] array of inline image part
+	 * @return InlineImagePart[] inline image parts
 	 */
 	public function getInlineImageParts()
 	{
@@ -96,7 +106,7 @@ class Parser
 	}
 
 	/**
-	 * @return bool whether this message has text/plain part
+	 * @return bool whether this message has plain text part
 	 */
 	public function hasPlainTextPart()
 	{
@@ -105,9 +115,9 @@ class Parser
 	}
 
 	/**
-	 * @return bool whether this message has text/html part
+	 * @return bool whether this message has rich text part
 	 */
-	public function hasHtmlTextPart()
+	public function hasRichTextPart()
 	{
 		// TODO 実装
 		return false;
