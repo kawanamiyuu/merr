@@ -108,7 +108,7 @@ class ZendTest extends PHPUnit_Framework_TestCase
 	 */
 	public function recursive()
 	{
-		$rii = new \RecursiveIteratorIterator($this->parts, RecursiveIteratorIterator::LEAVES_ONLY);
+		$rii = new \RecursiveIteratorIterator($this->parts, \RecursiveIteratorIterator::LEAVES_ONLY);
 		$this->assertCount(6, $rii);
 	}
 
