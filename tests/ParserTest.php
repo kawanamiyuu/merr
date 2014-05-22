@@ -1,8 +1,9 @@
 <?php
 
 use Merr\Parser;
+use Merr\Part\AttachmentPart;
 use Merr\Part\GenericPart;
-use Merr\Part\GenericPartIterator;
+use Merr\Part\TextPart;
 
 class ParserTest extends PHPUnit_Framework_TestCase {
 
@@ -23,7 +24,6 @@ class ParserTest extends PHPUnit_Framework_TestCase {
 	public function getParts_no_callbak()
 	{
 		$parts = $this->parser->getParts();
-		$this->assertInstanceOf(GenericPartIterator::class, $parts);
 		$this->assertCount(6, $parts);
 		$this->assertCount(0, $this->parser->getParts());
 	}
@@ -36,14 +36,41 @@ class ParserTest extends PHPUnit_Framework_TestCase {
 		$attachments = $this->parser->getParts(function(GenericPart $part) {
 			return $part->getContentDisposition()->getDisposition() === "attachment";
 		});
-		$this->assertInstanceOf(GenericPartIterator::class, $attachments);
+
 		$this->assertCount(2, $attachments);
+		$this->assertInstanceOf("Merr\\Part\\GenericPart", $attachments[0]);
+		$this->assertInstanceOf("Merr\\Part\\GenericPart", $attachments[1]);
 
 		$plainTexts = $this->parser->getParts(function(GenericPart $part) {
 			return $part->getContentType()->getType() === "text/plain";
 		});
-		$this->assertInstanceOf(GenericPartIterator::class, $plainTexts);
+
 		$this->assertCount(1, $plainTexts);
+		$this->assertInstanceOf("Merr\\Part\\GenericPart", $plainTexts[0]);
+
+		$this->assertCount(3, $this->parser->getParts());
+		$this->assertCount(0, $this->parser->getParts());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getParts_specify_part()
+	{
+		$attachments = $this->parser->getParts(function(GenericPart $part) {
+			return $part->getContentDisposition()->getDisposition() === "attachment";
+		}, new AttachmentPart);
+
+		$this->assertCount(2, $attachments);
+		$this->assertInstanceOf("Merr\\Part\\AttachmentPart", $attachments[0]);
+		$this->assertInstanceOf("Merr\\Part\\AttachmentPart", $attachments[1]);
+
+		$plainTexts = $this->parser->getParts(function(GenericPart $part) {
+			return $part->getContentType()->getType() === "text/plain";
+		}, new TextPart);
+
+		$this->assertCount(1, $plainTexts);
+		$this->assertInstanceOf("Merr\\Part\\TextPart", $plainTexts[0]);
 
 		$this->assertCount(3, $this->parser->getParts());
 		$this->assertCount(0, $this->parser->getParts());

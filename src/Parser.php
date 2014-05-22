@@ -4,8 +4,10 @@ namespace Merr;
 
 use Merr\Exception\InvalidArgumentException;
 use Merr\Part\AttachmentPart;
+use Merr\Part\GenericPart;
 use Merr\Part\GenericPartIterator;
 use Merr\Part\InlineImagePart;
+use Merr\Part\PartInterface;
 use Merr\Part\TextPart;
 use Merr\Util\ZendMailUtil;
 use Zend\Mail\Storage\Part as ZfPart;
@@ -45,27 +47,36 @@ class Parser
 		return null;
 	}
 
-	public function getParts(callable $callback = null)
+	/**
+	 * @param callable      $callback
+	 * @param PartInterface $retPart
+	 * @return GenericPart[]|PartInterface[]
+	 */
+	public function getParts(callable $callback = null, PartInterface $retPart = null)
 	{
-		if ($callback === null) {
-			$ret = $this->parts;
-			$empty = [];
-			$this->parts = new GenericPartIterator($empty);
-			return $ret;
+		$results = [];
 
-		} else {
-			$ret = [];
-			while ($this->parts->valid()) {
+		while ($this->parts->valid()) {
+			if ($callback == null) {
+				$results[] = $this->parts->current();
+				$this->parts->remove();
+			} else {
 				if ($callback($this->parts->current())) {
-					$ret[] = $this->parts->current();
+					if ($retPart !== null) {
+						$retPart->setGenericPart($this->parts->current());
+						$results[] = $retPart;
+					} else {
+						$results[] = $this->parts->current();
+					}
 					$this->parts->remove();
 				}
-				$this->parts->next();
 			}
-			$this->parts->rewind();
-
-			return new GenericPartIterator($ret);
+			$this->parts->next();
 		}
+
+		$this->parts->rewind();
+
+		return $results;
 	}
 
 	/**
