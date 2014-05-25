@@ -31,22 +31,25 @@ class ParserTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function getParts_callback()
+	public function getParts_callback_without_custom_part()
 	{
-		$attachments = $this->parser->getParts(function(GenericPart $part) {
-			return $part->getContentDisposition()->getDisposition() === "attachment";
-		});
-
-		$this->assertCount(2, $attachments);
-		$this->assertInstanceOf("Merr\\Part\\GenericPart", $attachments[0]);
-		$this->assertInstanceOf("Merr\\Part\\GenericPart", $attachments[1]);
-
 		$plainTexts = $this->parser->getParts(function(GenericPart $part) {
 			return $part->getContentType()->getType() === "text/plain";
 		});
 
 		$this->assertCount(1, $plainTexts);
 		$this->assertInstanceOf("Merr\\Part\\GenericPart", $plainTexts[0]);
+		$this->assertEquals("text/plain", $plainTexts[0]->getContentType()->getType());
+
+		$attachments = $this->parser->getParts(function(GenericPart $part) {
+			return $part->getContentDisposition()->getDisposition() === "attachment";
+		});
+
+		$this->assertCount(2, $attachments);
+		$this->assertInstanceOf("Merr\\Part\\GenericPart", $attachments[0]);
+		$this->assertEquals("google.png", $attachments[0]->getContentDisposition()->getParameter("filename"));
+		$this->assertInstanceOf("Merr\\Part\\GenericPart", $attachments[1]);
+		$this->assertEquals("blogger.png", $attachments[1]->getContentDisposition()->getParameter("filename"));
 
 		$this->assertCount(3, $this->parser->getParts());
 		$this->assertCount(0, $this->parser->getParts());
@@ -55,22 +58,27 @@ class ParserTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function getParts_specify_part()
+	public function getParts_callback_with_custom_part()
 	{
-		$attachments = $this->parser->getParts(function(GenericPart $part) {
-			return $part->getContentDisposition()->getDisposition() === "attachment";
-		}, new AttachmentPart);
-
-		$this->assertCount(2, $attachments);
-		$this->assertInstanceOf("Merr\\Part\\AttachmentPart", $attachments[0]);
-		$this->assertInstanceOf("Merr\\Part\\AttachmentPart", $attachments[1]);
-
+		/** @var TextPart[] $plainTexts */
 		$plainTexts = $this->parser->getParts(function(GenericPart $part) {
 			return $part->getContentType()->getType() === "text/plain";
 		}, new TextPart);
 
 		$this->assertCount(1, $plainTexts);
 		$this->assertInstanceOf("Merr\\Part\\TextPart", $plainTexts[0]);
+		$this->assertEquals("text/plain", $plainTexts[0]->getContentType());
+
+		/** @var AttachmentPart[] $attachments */
+		$attachments = $this->parser->getParts(function(GenericPart $part) {
+			return $part->getContentDisposition()->getDisposition() === "attachment";
+		}, new AttachmentPart);
+
+		$this->assertCount(2, $attachments);
+		$this->assertInstanceOf("Merr\\Part\\AttachmentPart", $attachments[0]);
+		$this->assertEquals("google.png", $attachments[0]->getFilename());
+		$this->assertInstanceOf("Merr\\Part\\AttachmentPart", $attachments[1]);
+		$this->assertEquals("blogger.png", $attachments[1]->getFilename());
 
 		$this->assertCount(3, $this->parser->getParts());
 		$this->assertCount(0, $this->parser->getParts());

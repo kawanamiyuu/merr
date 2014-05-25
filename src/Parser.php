@@ -63,8 +63,11 @@ class Parser
 			} else {
 				if ($callback($this->parts->current())) {
 					if ($retPart !== null) {
-						$retPart->setGenericPart($this->parts->current());
-						$results[] = $retPart;
+						$reflClass = new \ReflectionClass($retPart);
+						/** @var PartInterface $retPartInst */
+						$retPartInst = $reflClass->newInstance();
+						$retPartInst->setGenericPart($this->parts->current());
+						$results[] = $retPartInst;
 					} else {
 						$results[] = $this->parts->current();
 					}
