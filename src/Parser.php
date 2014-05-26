@@ -83,21 +83,23 @@ class Parser
 	}
 
 	/**
-	 * @return TextPart[] plain text parts
+	 * @return TextPart[] (inline) plain text parts
 	 */
 	public function getPlainTextParts()
 	{
-		// TODO 実装
-		return null;
+		return $this->getParts(function(GenericPart $part) {
+			return $part->isPlainTextPart();
+		}, new TextPart());
 	}
 
 	/**
-	 * @return TextPart[] html text parts
+	 * @return TextPart[] (inline) html text parts
 	 */
 	public function getHtmlTextParts()
 	{
-		// TODO 実装
-		return null;
+		return $this->getParts(function(GenericPart $part) {
+			return $part->isHtmlTextPart();
+		}, new TextPart());
 	}
 
 	/**
@@ -105,8 +107,9 @@ class Parser
 	 */
 	public function getAttachmentParts()
 	{
-		// TODO 実装
-		return null;
+		return $this->getParts(function(GenericPart $part) {
+			return $part->isAttachmentPart();
+		}, new AttachmentPart());
 
 	}
 
@@ -115,43 +118,76 @@ class Parser
 	 */
 	public function getInlineImageParts()
 	{
-		// TODO 実装
-		return null;
+		return $this->getParts(function(GenericPart $part) {
+			return $part->isInlineImagePart();
+		}, new InlineImagePart());
 	}
 
 	/**
-	 * @return bool whether this message has plain text part
+	 * @return bool true, if this message has plain text part
 	 */
 	public function hasPlainTextPart()
 	{
-		// TODO 実装
+		foreach ($this->parts as $part) {
+			/** @var GenericPart $part */
+			if ($part->isPlainTextPart()) {
+				$this->parts->rewind();
+				return true;
+			}
+		}
+
+		$this->parts->rewind();
 		return false;
 	}
 
 	/**
-	 * @return bool whether this message has rich text part
+	 * @return bool true, if this message has html text part
 	 */
-	public function hasRichTextPart()
+	public function hasHtmlTextPart()
 	{
-		// TODO 実装
+		foreach ($this->parts as $part) {
+			/** @var GenericPart $part */
+			if ($part->isHtmlTextPart()) {
+				$this->parts->rewind();
+				return true;
+			}
+		}
+
+		$this->parts->rewind();
 		return false;
 	}
 
 	/**
-	 * @return bool whether this message has attachment part
+	 * @return bool true, if this message has attachment part
 	 */
 	public function hasAttachmentPart()
 	{
-		// TODO 実装
+		foreach ($this->parts as $part) {
+			/** @var GenericPart $part */
+			if ($part->isAttachmentPart()) {
+				$this->parts->rewind();
+				return true;
+			}
+		}
+
+		$this->parts->rewind();
 		return false;
 	}
 
 	/**
-	 * @return bool whether this message has inline image part
+	 * @return bool true, if this message has inline image part
 	 */
 	public function hasInlineImagePart()
 	{
-		// TODO 実装
+		foreach ($this->parts as $part) {
+			/** @var GenericPart $part */
+			if ($part->isInlineImagePart()) {
+				$this->parts->rewind();
+				return true;
+			}
+		}
+
+		$this->parts->rewind();
 		return false;
 	}
 }

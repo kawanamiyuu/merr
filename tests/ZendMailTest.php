@@ -14,7 +14,7 @@ class ZendTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$raw = getTestMail("03.htmltext_inlineimage_attachement.eml");
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$this->parts = new Part(["raw" => $raw]);
 	}
 

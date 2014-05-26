@@ -114,4 +114,40 @@ class GenericPart
 	{
 		return $this->contentId;
 	}
+
+	/**
+	 * @return bool true, if this part is (inline) plain text part
+	 */
+	public function isPlainTextPart()
+	{
+		return $this->getContentType()->getType() === "text/plain"
+			&& $this->getContentDisposition()->getDisposition() !== "attachment";
+	}
+
+	/**
+	 * @return bool true, if this part is (inline) html text part
+	 */
+	public function isHtmlTextPart()
+	{
+		return $this->getContentType()->getType() === "text/html"
+			&& $this->getContentDisposition()->getDisposition() !== "attachment";
+	}
+
+	/**
+	 * @return bool true, if this part is attachment part
+	 */
+	public function isAttachmentPart()
+	{
+		return $this->getContentDisposition()->getDisposition() === "attachment";
+
+	}
+
+	/**
+	 * @return bool true, if this part is inline image part
+	 */
+	public function isInlineImagePart()
+	{
+		return strpos($this->getContentType()->getType(), "image/") !== false
+			&& $this->getContentDisposition()->getDisposition() === "inline";
+	}
 }

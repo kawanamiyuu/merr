@@ -1,6 +1,5 @@
 <?php
 
-use Merr\Part\GenericPart;
 use Merr\Util\ZendMailUtil;
 use Zend\Mail\Storage\Part as ZfPart;
 
@@ -14,7 +13,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$raw = getTestMail("03.htmltext_inlineimage_attachement.eml");
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$this->parts = new ZfPart(["raw" => $raw]);
 	}
 
@@ -77,9 +76,22 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function convertGenericPartRecursively()
+	public function convertGenericPartRecursively_singlepart()
 	{
-		$parts = ZendMailUtil::convertGenericPartRecursively($this->parts);
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+		$parts = ZendMailUtil::convertGenericPartRecursively($parts);
+		$this->assertCount(1, $parts);
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertGenericPartRecursively_multipart()
+	{
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+		$parts = ZendMailUtil::convertGenericPartRecursively($parts);
 		$this->assertCount(6, $parts);
 	}
 }

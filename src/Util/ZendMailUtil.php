@@ -97,10 +97,15 @@ final class ZendMailUtil
 	public static function convertGenericPartRecursively(ZfPart $zfPart)
 	{
 		$parts = [];
-		$rii = new \RecursiveIteratorIterator($zfPart, \RecursiveIteratorIterator::LEAVES_ONLY);
-		foreach ($rii as $part) {
-			$parts[] = self::convertGenericPart($part);
+		if ($zfPart->isMultipart()) {
+			$rii = new \RecursiveIteratorIterator($zfPart, \RecursiveIteratorIterator::LEAVES_ONLY);
+			foreach ($rii as $part) {
+				$parts[] = self::convertGenericPart($part);
+			}
+		} else {
+			$parts[] = ZendMailUtil::convertGenericPart($zfPart);
 		}
+
 		return $parts;
 	}
 } 
