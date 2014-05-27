@@ -8,37 +8,76 @@ use Zend\Mime\Decode;
 class ZendTest extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var Part part
+	 * @test
 	 */
-	private $parts;
-
-	public function setUp()
+	public function parseHeader()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
-		$this->parts = new Part(["raw" => $raw]);
+		$parts = new Part(["raw" => $raw]);
+
+		{
+			$this->assertEquals("テストメールの件名", $parts->getHeaderField("subject"));
+			$this->assertEquals("送信者(From)の名前 <from-addr@example.com>", $parts->getHeaderField("from"));
+			$this->assertEquals("宛先(To)の名前 <to-addr@example.com>", $parts->getHeaderField("to"));
+
+			try {
+				$this->assertEquals(false, $parts->getHeaderField("cc"));
+				$this->fail();
+			} catch (Zend\Mail\Storage\Exception\InvalidArgumentException $e) {
+				$this->assertTrue(true);
+			} catch (\Exception $e) {
+				$this->fail();
+			}
+
+			try {
+				$this->assertEquals(false, $parts->getHeaderField("bcc"));
+				$this->fail();
+			} catch (Zend\Mail\Storage\Exception\InvalidArgumentException $e) {
+				$this->assertTrue(true);
+			} catch (\Exception $e) {
+				$this->fail();
+			}
+		}
+
+		{
+			$this->assertInstanceOf("\\Zend\\Mail\\Header\\Subject", $parts->getHeaders()->get("subject"));
+			$this->assertEquals("テストメールの件名", $parts->getHeaders()->get("subject")->getFieldValue());
+
+			$this->assertInstanceOf("\\Zend\\Mail\\Header\\From", $parts->getHeaders()->get("from"));
+			$this->assertEquals("送信者(From)の名前 <from-addr@example.com>", $parts->getHeaders()->get("from")->getFieldValue());
+
+			$this->assertInstanceOf("\\Zend\\Mail\\Header\\To", $parts->getHeaders()->get("to"));
+			$this->assertEquals("宛先(To)の名前 <to-addr@example.com>", $parts->getHeaders()->get("to")->getFieldValue());
+
+			$this->assertEquals(false, $parts->getHeaders()->get("cc"));
+			$this->assertEquals(false, $parts->getHeaders()->get("bcc"));
+		}
 	}
 
 	/**
 	 * @test
 	 */
-	public function parse()
+	public function parseContent()
 	{
-		$this->assertInstanceOf("Zend\\Mail\\Storage\\Part", $this->parts);
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new Part(["raw" => $raw]);
+		
+		$this->assertInstanceOf("Zend\\Mail\\Storage\\Part", $parts);
 
-		$this->assertEquals("1.0", $this->parts->getHeader("mime-version")->getFieldValue());
-		$this->assertEquals("Mon, 28 Apr 2014 20:54:57 +0900", $this->parts->getHeader("date")->getFieldValue());
-		$this->assertEquals("<CADHfj_GHVHvgPXYqqBAJEdG+zTsCM299CfnTr-N3sXLsRTQe4g@example.com>", $this->parts->getHeader("message-id")->getFieldValue());
-		$this->assertEquals("テストメールの件名", $this->parts->getHeader("subject")->getFieldValue());
-		$this->assertEquals("送信者(From)の名前 <from-addr@example.com>", $this->parts->getHeader("from")->getFieldValue());
-		$this->assertEquals("宛先(To)の名前 <to-addr@example.com>", $this->parts->getHeader("to")->getFieldValue());
+		$this->assertEquals("1.0", $parts->getHeader("mime-version")->getFieldValue());
+		$this->assertEquals("Mon, 28 Apr 2014 20:54:57 +0900", $parts->getHeader("date")->getFieldValue());
+		$this->assertEquals("<CADHfj_GHVHvgPXYqqBAJEdG+zTsCM299CfnTr-N3sXLsRTQe4g@example.com>", $parts->getHeader("message-id")->getFieldValue());
+		$this->assertEquals("テストメールの件名", $parts->getHeader("subject")->getFieldValue());
+		$this->assertEquals("送信者(From)の名前 <from-addr@example.com>", $parts->getHeader("from")->getFieldValue());
+		$this->assertEquals("宛先(To)の名前 <to-addr@example.com>", $parts->getHeader("to")->getFieldValue());
 
-		$this->assertEquals("multipart/mixed", $this->parts->getHeader("content-type")->getType());
+		$this->assertEquals("multipart/mixed", $parts->getHeader("content-type")->getType());
 
-		$this->assertTrue($this->parts->isMultipart());
-		$this->assertEquals(3, $this->parts->countParts());
+		$this->assertTrue($parts->isMultipart());
+		$this->assertEquals(3, $parts->countParts());
 
 		{
-			$related = $this->parts->getPart(1);
+			$related = $parts->getPart(1);
 			$this->assertEquals("multipart/related", $related->getHeader("content-type")->getType());
 
 			$this->assertTrue($related->isMultipart());
@@ -86,7 +125,7 @@ class ZendTest extends PHPUnit_Framework_TestCase
 			}
 		}
 		{
-			$attachment1 = $this->parts->getPart(2);
+			$attachment1 = $parts->getPart(2);
 			$this->assertEquals('attachment; filename="google.png"', $attachment1->getHeader("content-disposition")->getFieldValue());
 			$this->assertEquals("image/png", $attachment1->getHeader("content-type")->getType());
 			$this->assertEquals("google.png", $attachment1->getHeader("content-type")->getParameter("name"));
@@ -94,7 +133,7 @@ class ZendTest extends PHPUnit_Framework_TestCase
 			$this->assertNotEmpty($attachment1->getContent());
 		}
 		{
-			$attachment2 = $this->parts->getPart(3);
+			$attachment2 = $parts->getPart(3);
 			$this->assertEquals('attachment; filename="blogger.png"', $attachment2->getHeader("content-disposition")->getFieldValue());
 			$this->assertEquals("image/png", $attachment2->getHeader("content-type")->getType());
 			$this->assertEquals("blogger.png", $attachment2->getHeader("content-type")->getParameter("name"));
@@ -106,9 +145,12 @@ class ZendTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function recursive()
+	public function flatten_by_RecursiveIteratorIterator()
 	{
-		$rii = new \RecursiveIteratorIterator($this->parts, \RecursiveIteratorIterator::LEAVES_ONLY);
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new Part(["raw" => $raw]);
+
+		$rii = new \RecursiveIteratorIterator($parts, \RecursiveIteratorIterator::LEAVES_ONLY);
 		$this->assertCount(6, $rii);
 	}
 

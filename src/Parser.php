@@ -47,6 +47,37 @@ class Parser
 		return null;
 	}
 
+	public function getFrom()
+	{
+		// TODO 実装
+		return null;
+	}
+
+	public function getTo()
+	{
+		// TODO 実装
+		return null;
+	}
+
+	public function getCc()
+	{
+		// TODO 実装
+		return null;
+	}
+
+	public function getBcc()
+	{
+		// TODO 実装
+		return null;
+	}
+
+	public function getSubject()
+	{
+		// TODO 実装
+		return null;
+	}
+
+
 	/**
 	 * @param callable      $callback
 	 * @param PartInterface $retPart
