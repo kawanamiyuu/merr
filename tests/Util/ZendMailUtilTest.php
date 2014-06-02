@@ -1,20 +1,36 @@
 <?php
 
+use Merr\Header\Address;
 use Merr\Util\ZendMailUtil;
 use Zend\Mail\Storage\Part as ZfPart;
 
 class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 {
-
 	/**
-	 * @var ZfPart
+	 * @test
 	 */
-	private $parts;
-
-	public function setUp()
+	public function convertAddress()
 	{
-		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
-		$this->parts = new ZfPart(["raw" => $raw]);
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$from = ZendMailUtil::convertAddress($parts, "from");
+		$this->assertCount(1, $from);
+		$this->assertEquals("from-addr@example.com", $from[0]->getAddress());
+		$this->assertEquals("from-name", $from[0]->getName());
+
+		$to = ZendMailUtil::convertAddress($parts, "to");
+		$this->assertCount(2, $to);
+		$this->assertEquals("to-addr1@example.com", $to[0]->getAddress());
+		$this->assertEquals("to-name1", $to[0]->getName());
+		$this->assertEquals("to-addr2@example.com", $to[1]->getAddress());
+		$this->assertEquals("to-name2", $to[1]->getName());
+
+		$cc = ZendMailUtil::convertAddress($parts, "cc");
+		$this->assertCount(0, $cc);
+
+		$bcc = ZendMailUtil::convertAddress($parts, "bcc");
+		$this->assertCount(0, $bcc);
 	}
 
 	/**
@@ -22,7 +38,10 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	 */
 	public function convertGenericPart_textPart()
 	{
-		$related = $this->parts->getPart(1);
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$related = $parts->getPart(1);
 		$alternative = $related->getPart(1);
 		$plainText = $alternative->getPart(1);
 
@@ -41,7 +60,10 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	 */
 	public function convertGenericPart_inlineImagePart()
 	{
-		$related = $this->parts->getPart(1);
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$related = $parts->getPart(1);
 		$inlineImagePart = $related->getPart(2);
 
 		$part = ZendMailUtil::convertGenericPart($inlineImagePart);
@@ -60,7 +82,10 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	 */
 	public function convertGenericPart_attachmentPart()
 	{
-		$attachmentPart = $this->parts->getPart(2);
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$attachmentPart = $parts->getPart(2);
 
 		$part = ZendMailUtil::convertGenericPart($attachmentPart);
 
@@ -80,6 +105,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	{
 		$raw = getTestMail("01.plain_text_ascii.eml");
 		$parts = new ZfPart(["raw" => $raw]);
+
 		$parts = ZendMailUtil::convertGenericPartRecursively($parts);
 		$this->assertCount(1, $parts);
 	}
@@ -91,6 +117,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$parts = new ZfPart(["raw" => $raw]);
+
 		$parts = ZendMailUtil::convertGenericPartRecursively($parts);
 		$this->assertCount(6, $parts);
 	}

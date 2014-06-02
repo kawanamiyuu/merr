@@ -3,11 +3,14 @@
 namespace Merr\Util;
 
 use Merr\Exception\InvalidArgumentException;
+use Merr\Header\Address;
 use Merr\Header\ContentDisposition;
 use Merr\Header\ContentId;
 use Merr\Header\ContentTransferEncoding;
 use Merr\Header\ContentType;
 use Merr\Part\GenericPart;
+use Zend\Mail\Address as ZfAddress;
+use Zend\Mail\Header\AbstractAddressList as ZfAbstractAddressList;
 use Zend\Mail\Header\ContentTransferEncoding as ZfContentTransferEncoding;
 use Zend\Mail\Header\ContentType as ZfContentType;
 use Zend\Mail\Storage\Part as ZfPart;
@@ -15,6 +18,25 @@ use Zend\Mime\Decode as ZfDecode;
 
 final class ZendMailUtil
 {
+	/**
+	 * @param ZfPart $zfPart
+	 * @param string $fieldName
+	 * @return Address[]
+	 */
+	public static function convertAddress(ZfPart $zfPart, $fieldName)
+	{
+		$addresses = [];
+		if ($zfPart->getHeaders()->has($fieldName)) {
+			/** @var ZfAbstractAddressList $zfAddressList */
+			$zfAddressList = $zfPart->getHeaders()->get($fieldName);
+			foreach ($zfAddressList->getAddressList() as $zfAddress) {
+				/** @var ZfAddress $zfAddress */
+				$addresses[] = new Address($zfAddress->getEmail(), $zfAddress->getName());
+			}
+		}
+		return $addresses;
+	}
+
 	/**
 	 * @param ZfPart $zfPart
 	 * @return GenericPart
@@ -103,7 +125,7 @@ final class ZendMailUtil
 				$parts[] = self::convertGenericPart($part);
 			}
 		} else {
-			$parts[] = ZendMailUtil::convertGenericPart($zfPart);
+			$parts[] = self::convertGenericPart($zfPart);
 		}
 
 		return $parts;

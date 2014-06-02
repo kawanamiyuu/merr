@@ -3,6 +3,7 @@
 namespace Merr;
 
 use Merr\Exception\InvalidArgumentException;
+use Merr\Header\Address;
 use Merr\Part\AttachmentPart;
 use Merr\Part\GenericPart;
 use Merr\Part\GenericPartIterator;
@@ -14,6 +15,31 @@ use Zend\Mail\Storage\Part as ZfPart;
 
 class Parser
 {
+	/**
+	 * @var Address[] From addresses
+	 */
+	private $from;
+
+	/**
+	 * @var Address[] To addresses
+	 */
+	private $to;
+
+	/**
+	 * @var Address[] Cc addresses
+	 */
+	private $cc;
+
+	/**
+	 * @var Address[] Bcc addresses
+	 */
+	private $bcc;
+
+	/**
+	 * @var String Subject
+	 */
+	private $subject;
+
 	/**
 	 * @var GenericPartIterator
 	 */
