@@ -13,6 +13,7 @@ use Zend\Mail\Address as ZfAddress;
 use Zend\Mail\Header\AbstractAddressList as ZfAbstractAddressList;
 use Zend\Mail\Header\ContentTransferEncoding as ZfContentTransferEncoding;
 use Zend\Mail\Header\ContentType as ZfContentType;
+use Zend\Mail\Header\Date as ZfDate;
 use Zend\Mail\Storage\Part as ZfPart;
 use Zend\Mime\Decode as ZfDecode;
 
@@ -34,7 +35,32 @@ final class ZendMailUtil
 				$addresses[] = new Address($zfAddress->getEmail(), $zfAddress->getName());
 			}
 		}
+
 		return $addresses;
+	}
+
+	/**
+	 * @param ZfPart        $zfPart
+	 * @param \DateTimeZone $dateTimeZone
+	 * @return \DateTime|null
+	 */
+	public static function convertDate(ZfPart $zfPart, \DateTimeZone $dateTimeZone = null)
+	{
+		if ($zfPart->getHeaders()->has("date")) {
+			/** @var ZfDate $zfDate */
+			$zfDate = $zfPart->getHeaders()->get("date");
+			$timestamp = strtotime($zfDate->getFieldValue());
+
+			$dateTime = new \DateTime();
+			$dateTime->setTimestamp($timestamp);
+			if ($dateTimeZone !== null) {
+				$dateTime->setTimezone($dateTimeZone);
+			}
+
+			return $dateTime;
+		}
+
+		return null;
 	}
 
 	/**

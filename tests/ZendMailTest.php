@@ -16,6 +16,7 @@ class ZendTest extends PHPUnit_Framework_TestCase
 		$parts = new Part(["raw" => $raw]);
 
 		{
+			$this->assertEquals("Mon, 28 Apr 2014 20:54:57 +0900", $parts->getHeaderField("date"));
 			$this->assertEquals("テストメールの件名", $parts->getHeaderField("subject"));
 			$this->assertEquals("送信者(From)の名前 <from-addr@example.com>", $parts->getHeaderField("from"));
 			$this->assertEquals("宛先(To)の名前 <to-addr@example.com>", $parts->getHeaderField("to"));
@@ -40,6 +41,9 @@ class ZendTest extends PHPUnit_Framework_TestCase
 		}
 
 		{
+			$this->assertInstanceOf("\\Zend\\Mail\\Header\\Date", $parts->getHeaders()->get("date"));
+			$this->assertEquals("Mon, 28 Apr 2014 20:54:57 +0900", $parts->getHeaders()->get("date")->getFieldValue());
+
 			$this->assertInstanceOf("\\Zend\\Mail\\Header\\Subject", $parts->getHeaders()->get("subject"));
 			$this->assertEquals("テストメールの件名", $parts->getHeaders()->get("subject")->getFieldValue());
 

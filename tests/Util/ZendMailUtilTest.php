@@ -36,6 +36,31 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
+	public function convertDate()
+	{
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$localTimeZone = "Asia/Tokyo";
+		ini_set("date.timezone", $localTimeZone);
+
+		{
+			$date = ZendMailUtil::convertDate($parts);
+			$this->assertInstanceOf("\\DateTime", $date);
+			$this->assertEquals("2014-04-01 21:34:56", $date->format("Y-m-d H:i:s"));
+			$this->assertEquals($localTimeZone, $date->getTimezone()->getName());
+		}
+		{
+			$date = ZendMailUtil::convertDate($parts, new \DateTimeZone("UTC"));
+			$this->assertInstanceOf("\\DateTime", $date);
+			$this->assertEquals("2014-04-01 12:34:56", $date->format("Y-m-d H:i:s"));
+			$this->assertEquals("UTC", $date->getTimezone()->getName());
+		}
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertGenericPart_textPart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");

@@ -36,9 +36,14 @@ class Parser
 	private $bcc;
 
 	/**
-	 * @var String Subject
+	 * @var string Subject
 	 */
 	private $subject;
+
+	/**
+	 * @var \DateTime
+	 */
+	private $date;
 
 	/**
 	 * @var GenericPartIterator
@@ -73,34 +78,52 @@ class Parser
 		return null;
 	}
 
+	/**
+	 * @return Header\Address[] From
+	 */
 	public function getFrom()
 	{
-		// TODO 実装
-		return null;
+		return $this->from;
 	}
 
+	/**
+	 * @return Header\Address[] To
+	 */
 	public function getTo()
 	{
-		// TODO 実装
-		return null;
+		return $this->to;
 	}
 
+	/**
+	 * @return Header\Address[] Cc
+	 */
 	public function getCc()
 	{
-		// TODO 実装
-		return null;
+		return $this->cc;
 	}
 
+	/**
+	 * @return Header\Address[] Bcc
+	 */
 	public function getBcc()
 	{
-		// TODO 実装
-		return null;
+		return $this->bcc;
 	}
 
+	/**
+	 * @return string Subject
+	 */
 	public function getSubject()
 	{
-		// TODO 実装
-		return null;
+		return $this->subject;
+	}
+
+	/**
+	 * @return \DateTime Date
+	 */
+	public function getDate()
+	{
+		return $this->date;
 	}
 
 
