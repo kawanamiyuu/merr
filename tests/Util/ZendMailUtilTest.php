@@ -61,6 +61,18 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
+	public function convertSubject()
+	{
+		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$subject = ZendMailUtil::convertSubject($parts);
+		$this->assertEquals("テストメールの件名", $subject);
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertGenericPart_textPart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");

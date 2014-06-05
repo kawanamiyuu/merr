@@ -65,6 +65,19 @@ final class ZendMailUtil
 
 	/**
 	 * @param ZfPart $zfPart
+	 * @return string|null
+	 */
+	public static function convertSubject(ZfPart $zfPart)
+	{
+		if ($zfPart->getHeaders()->has("subject")) {
+			return $zfPart->getHeaders()->get("subject")->getFieldValue();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param ZfPart $zfPart
 	 * @return GenericPart
 	 */
 	public static function convertGenericPart(ZfPart $zfPart)
