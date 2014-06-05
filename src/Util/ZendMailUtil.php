@@ -65,12 +65,26 @@ final class ZendMailUtil
 
 	/**
 	 * @param ZfPart $zfPart
-	 * @return string|null
+	 * @return null|string
 	 */
 	public static function convertSubject(ZfPart $zfPart)
 	{
 		if ($zfPart->getHeaders()->has("subject")) {
 			return $zfPart->getHeaders()->get("subject")->getFieldValue();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param ZfPart $zfPart
+	 * @return null|string
+	 */
+	public static function convertMessageId(ZfPart $zfPart)
+	{
+		if ($zfPart->getHeaders()->has("message-id")) {
+			$messageId = $zfPart->getHeaders()->get("message-id")->getFieldValue();
+			return trim($messageId, "<>");
 		}
 
 		return null;

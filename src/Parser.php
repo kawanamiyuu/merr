@@ -16,22 +16,22 @@ use Zend\Mail\Storage\Part as ZfPart;
 class Parser
 {
 	/**
-	 * @var Address[] From addresses
+	 * @var Address[] From Addresses
 	 */
 	private $from;
 
 	/**
-	 * @var Address[] To addresses
+	 * @var Address[] To Addresses
 	 */
 	private $to;
 
 	/**
-	 * @var Address[] Cc addresses
+	 * @var Address[] Cc Addresses
 	 */
 	private $cc;
 
 	/**
-	 * @var Address[] Bcc addresses
+	 * @var Address[] Bcc Addresses
 	 */
 	private $bcc;
 
@@ -41,9 +41,14 @@ class Parser
 	private $subject;
 
 	/**
-	 * @var \DateTime
+	 * @var \DateTime Date
 	 */
 	private $date;
+
+	/**
+	 * @var string Message-Id
+	 */
+	private $messageId;
 
 	/**
 	 * @var GenericPartIterator
@@ -79,7 +84,7 @@ class Parser
 	}
 
 	/**
-	 * @return Header\Address[] From
+	 * @return Header\Address[] From Addresses
 	 */
 	public function getFrom()
 	{
@@ -87,7 +92,7 @@ class Parser
 	}
 
 	/**
-	 * @return Header\Address[] To
+	 * @return Header\Address[] To Addresses
 	 */
 	public function getTo()
 	{
@@ -95,7 +100,7 @@ class Parser
 	}
 
 	/**
-	 * @return Header\Address[] Cc
+	 * @return Header\Address[] Cc Addresses
 	 */
 	public function getCc()
 	{
@@ -103,7 +108,7 @@ class Parser
 	}
 
 	/**
-	 * @return Header\Address[] Bcc
+	 * @return Header\Address[] Bcc Addresses
 	 */
 	public function getBcc()
 	{
@@ -126,6 +131,13 @@ class Parser
 		return $this->date;
 	}
 
+	/**
+	 * @return string Message-Id
+	 */
+	public function getMessageId()
+	{
+		return $this->messageId;
+	}
 
 	/**
 	 * @param callable      $callback

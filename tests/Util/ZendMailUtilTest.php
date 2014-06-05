@@ -73,6 +73,18 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
+	public function convertMessageId()
+	{
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$messageId = ZendMailUtil::convertMessageId($parts);
+		$this->assertEquals("message-id@localhost.localdomain", $messageId);
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertGenericPart_textPart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
