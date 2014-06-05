@@ -16,6 +16,11 @@ use Zend\Mail\Storage\Part as ZfPart;
 class Parser
 {
 	/**
+	 * @var Address[] Reply-To Addresses
+	 */
+	private $replyTo;
+
+	/**
 	 * @var Address[] From Addresses
 	 */
 	private $from;
@@ -81,6 +86,14 @@ class Parser
 	{
 		// TODO 実装
 		return null;
+	}
+
+	/**
+	 * @return Header\Address[] Reply-To Addresses
+	 */
+	public function getReplyTo()
+	{
+		return $this->replyTo;
 	}
 
 	/**

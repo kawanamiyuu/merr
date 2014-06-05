@@ -14,6 +14,9 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 		$raw = getTestMail("01.plain_text_ascii.eml");
 		$parts = new ZfPart(["raw" => $raw]);
 
+		$replyTo = ZendMailUtil::convertAddress($parts, "reply-to");
+		$this->assertCount(0, $replyTo);
+
 		$from = ZendMailUtil::convertAddress($parts, "from");
 		$this->assertCount(1, $from);
 		$this->assertEquals("from-addr@example.com", $from[0]->getAddress());
