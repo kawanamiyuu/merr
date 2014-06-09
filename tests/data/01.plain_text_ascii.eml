@@ -1,4 +1,8 @@
 Mime-Version: 1.0
+References: <references1@example.com>,
+  <references2@example.com>
+In-Reply-To: <in-reply-to1@example.com>,
+  <in-reply-to2@example.com>
 Message-ID: <message-id@localhost.localdomain>
 Date: Tue, 01 Apr 2014 12:34:56 +0000 (UTC)
 From: from-name <from-addr@example.com>

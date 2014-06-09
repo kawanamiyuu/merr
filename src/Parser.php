@@ -56,6 +56,16 @@ class Parser
 	private $messageId;
 
 	/**
+	 * @var string[] In-Reply-To
+	 */
+	private $inReplyTo;
+
+	/**
+	 * @var string[] References
+	 */
+	private $references;
+
+	/**
 	 * @var GenericPartIterator
 	 */
 	private $parts;
@@ -150,6 +160,22 @@ class Parser
 	public function getMessageId()
 	{
 		return $this->messageId;
+	}
+
+	/**
+	 * @return string[] In-Reply-To
+	 */
+	public function getInReplyTo()
+	{
+		return $this->inReplyTo;
+	}
+
+	/**
+	 * @return string[] References
+	 */
+	public function getReferences()
+	{
+		return $this->references;
 	}
 
 	/**

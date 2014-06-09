@@ -78,16 +78,49 @@ final class ZendMailUtil
 
 	/**
 	 * @param ZfPart $zfPart
+	 * @param string $fieldName
+	 * @return string[]
+	 */
+	public static function convertIdentificationField(ZfPart $zfPart, $fieldName)
+	{
+		if ($zfPart->getHeaders()->has($fieldName)) {
+			$str = $zfPart->getHeaders()->get($fieldName)->getFieldValue();
+			$arr = explode(',', $str);
+			array_walk($arr, function(&$val) {
+				$val = trim($val, "<>");
+			});
+			return $arr;
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param ZfPart $zfPart
 	 * @return null|string
 	 */
 	public static function convertMessageId(ZfPart $zfPart)
 	{
-		if ($zfPart->getHeaders()->has("message-id")) {
-			$messageId = $zfPart->getHeaders()->get("message-id")->getFieldValue();
-			return trim($messageId, "<>");
-		}
+		$result = self::convertIdentificationField($zfPart, "message-id");
+		return count($result) > 0 ? $result[0] : null;
+	}
 
-		return null;
+	/**
+	 * @param ZfPart $zfPart
+	 * @return string[]
+	 */
+	public static function convertInReplyTo(ZfPart $zfPart)
+	{
+		return self::convertIdentificationField($zfPart, "in-reply-to");
+	}
+
+	/**
+	 * @param ZfPart $zfPart
+	 * @return string[]
+	 */
+	public static function convertReferences(ZfPart $zfPart)
+	{
+		return self::convertIdentificationField($zfPart, "references");
 	}
 
 	/**

@@ -1,6 +1,5 @@
 <?php
 
-use Merr\Header\Address;
 use Merr\Util\ZendMailUtil;
 use Zend\Mail\Storage\Part as ZfPart;
 
@@ -83,6 +82,30 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 
 		$messageId = ZendMailUtil::convertMessageId($parts);
 		$this->assertEquals("message-id@localhost.localdomain", $messageId);
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertInReplyTo()
+	{
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$inReplyTo = ZendMailUtil::convertInReplyTo($parts);
+		$this->assertEquals(["in-reply-to1@example.com", "in-reply-to2@example.com"], $inReplyTo);
+	}
+
+	/**
+	 * @test
+	 */
+	public function convertReferences()
+	{
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$references = ZendMailUtil::convertReferences($parts);
+		$this->assertEquals(["references1@example.com", "references2@example.com"], $references);
 	}
 
 	/**
