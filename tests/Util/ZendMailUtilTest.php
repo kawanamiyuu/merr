@@ -8,6 +8,30 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
+	public function convertHeaders()
+	{
+		$raw = getTestMail("01.plain_text_ascii.eml");
+		$parts = new ZfPart(["raw" => $raw]);
+
+		$headers = ZendMailUtil::convertHeaders($parts);
+
+		$this->assertCount(10, $headers);
+
+		$this->assertEquals("1.0", $headers["mime-version"]);
+		$this->assertEquals("<references1@example.com>,<references2@example.com>", $headers["references"]);
+		$this->assertEquals("<in-reply-to1@example.com>,<in-reply-to2@example.com>", $headers["in-reply-to"]);
+		$this->assertEquals("<message-id@localhost.localdomain>", $headers["message-id"]);
+		$this->assertEquals("Tue, 01 Apr 2014 12:34:56 +0000 (UTC)", $headers["date"]);
+		$this->assertEquals("from-name <from-addr@example.com>", $headers["from"]);
+		$this->assertEquals("to-name1 <to-addr1@example.com>,to-name2 <to-addr2@example.com>", $headers["to"]);
+		$this->assertEquals("Test Mail Subject", $headers["subject"]);
+		$this->assertEquals("text/plain;charset=\"ASCII\"", $headers["content-type"]);
+		$this->assertEquals("7bit", $headers["content-transfer-encoding"]);
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertAddress()
 	{
 		$raw = getTestMail("01.plain_text_ascii.eml");

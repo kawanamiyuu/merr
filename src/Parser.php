@@ -16,6 +16,11 @@ use Zend\Mail\Storage\Part as ZfPart;
 class Parser
 {
 	/**
+	 * @var array
+	 */
+	private $headers;
+
+	/**
 	 * @var Address[] Reply-To Addresses
 	 */
 	private $replyTo;
@@ -90,11 +95,14 @@ class Parser
 
 	/**
 	 * @param string $fieldName header field name
-	 * @return mixed
+	 * @return string|null
 	 */
 	public function getHeader($fieldName)
 	{
-		// TODO 実装
+		if (isset($headers[$fieldName])) {
+			return $this->headers[$fieldName];
+		}
+
 		return null;
 	}
 

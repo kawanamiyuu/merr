@@ -14,11 +14,34 @@ use Zend\Mail\Header\AbstractAddressList as ZfAbstractAddressList;
 use Zend\Mail\Header\ContentTransferEncoding as ZfContentTransferEncoding;
 use Zend\Mail\Header\ContentType as ZfContentType;
 use Zend\Mail\Header\Date as ZfDate;
+use Zend\Mail\Header\HeaderInterface as ZfHeaderInterface;
 use Zend\Mail\Storage\Part as ZfPart;
 use Zend\Mime\Decode as ZfDecode;
 
 final class ZendMailUtil
 {
+	/**
+	 * @param ZfPart $zfPart
+	 * @return array
+	 */
+	public static function convertHeaders(ZfPart $zfPart)
+	{
+		$headers = [];
+
+		foreach ($zfPart->getHeaders() as $zfHeader) {
+			/** @var ZfHeaderInterface $zfHeader */
+			$name = strtolower($zfHeader->getFieldName());
+			$value = $zfHeader->getFieldValue();
+			// TODO ヘッダー中の改行の扱いを統一したい→半角スペース1つに置換したい
+			// Zend\Mail\Headerで定義されているヘッダーと定義れていないヘッダー、
+			// また、定義されているヘッダーでもヘッダー毎に改行の扱いが異なる。
+			$value = preg_replace('/\r?\n[ \t]+/', '', $value);
+			$headers[$name] = $value;
+		}
+
+		return $headers;
+	}
+
 	/**
 	 * @param ZfPart $zfPart
 	 * @param string $fieldName
