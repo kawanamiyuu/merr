@@ -3,10 +3,10 @@
 namespace Merr\Part;
 
 
-class GenericPartIterator implements \ArrayAccess, \Iterator, \Countable
+class Parts implements \ArrayAccess, \Iterator, \Countable
 {
 	/**
-	 * @var GenericPart[]
+	 * @var Part[]
 	 */
 	private $parts;
 
@@ -16,7 +16,7 @@ class GenericPartIterator implements \ArrayAccess, \Iterator, \Countable
 	private $position = 0;
 
 	/**
-	 * @param GenericPart[] &$parts parts
+	 * @param Part[] &$parts parts
 	 */
 	public function __construct(array &$parts)
 	{
@@ -26,7 +26,7 @@ class GenericPartIterator implements \ArrayAccess, \Iterator, \Countable
 	/**
 	 * Return the current element
 	 *
-	 * @return GenericPart
+	 * @return Part
 	 */
 	public function current()
 	{
@@ -103,7 +103,7 @@ class GenericPartIterator implements \ArrayAccess, \Iterator, \Countable
 	 * Offset to retrieve
 	 *
 	 * @param mixed $offset offset
-	 * @return GenericPart
+	 * @return Part
 	 */
 	public function offsetGet($offset)
 	{

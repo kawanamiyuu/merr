@@ -8,7 +8,7 @@ use Merr\Header\ContentDisposition;
 use Merr\Header\ContentId;
 use Merr\Header\ContentTransferEncoding;
 use Merr\Header\ContentType;
-use Merr\Part\GenericPart;
+use Merr\Part\Part;
 use Zend\Mail\Address as ZfAddress;
 use Zend\Mail\Header\AbstractAddressList as ZfAbstractAddressList;
 use Zend\Mail\Header\ContentTransferEncoding as ZfContentTransferEncoding;
@@ -148,9 +148,9 @@ final class ZendMailUtil
 
 	/**
 	 * @param ZfPart $zfPart
-	 * @return GenericPart
+	 * @return Part
 	 */
-	public static function convertGenericPart(ZfPart $zfPart)
+	public static function convertPart(ZfPart $zfPart)
 	{
 		if ($zfPart->isMultipart()) {
 			throw new InvalidArgumentException("this part is multipart.");
@@ -211,7 +211,7 @@ final class ZendMailUtil
 			$contentId->setId(trim($zfContentId->getFieldValue(), "<>"));
 		}
 
-		$part = new GenericPart();
+		$part = new Part();
 		$part->setContent($content);
 		$part->setContentType($contentType);
 		$part->setContentTransferEncoding($contentTransferEncoding);
@@ -223,18 +223,18 @@ final class ZendMailUtil
 
 	/**
 	 * @param ZfPart $zfPart
-	 * @return GenericPart[]
+	 * @return Part[]
 	 */
-	public static function convertGenericPartRecursively(ZfPart $zfPart)
+	public static function convertPartRecursively(ZfPart $zfPart)
 	{
 		$parts = [];
 		if ($zfPart->isMultipart()) {
 			$rii = new \RecursiveIteratorIterator($zfPart, \RecursiveIteratorIterator::LEAVES_ONLY);
 			foreach ($rii as $part) {
-				$parts[] = self::convertGenericPart($part);
+				$parts[] = self::convertPart($part);
 			}
 		} else {
-			$parts[] = self::convertGenericPart($zfPart);
+			$parts[] = self::convertPart($zfPart);
 		}
 
 		return $parts;

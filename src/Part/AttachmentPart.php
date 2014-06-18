@@ -10,7 +10,7 @@ class AttachmentPart extends AbstractPart
 	 */
 	public function getContent()
 	{
-		return $this->getGenericPart()->getContent();
+		return $this->getPart()->getContent();
 	}
 
 	/**
@@ -18,7 +18,7 @@ class AttachmentPart extends AbstractPart
 	 */
 	public function getContentType()
 	{
-		return $this->getGenericPart()->getContentType()->getType();
+		return $this->getPart()->getContentType()->getType();
 	}
 
 	/**
@@ -26,6 +26,6 @@ class AttachmentPart extends AbstractPart
 	 */
 	public function getFilename()
 	{
-		return $this->getGenericPart()->getContentDisposition()->getParameter("filename");
+		return $this->getPart()->getContentDisposition()->getParameter("filename");
 	}
 } 

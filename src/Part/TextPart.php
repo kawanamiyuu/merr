@@ -10,7 +10,7 @@ class TextPart extends AbstractPart
 	 */
 	public function getContent()
 	{
-		return $this->getGenericPart()->getContent();
+		return $this->getPart()->getContent();
 	}
 
 	/**
@@ -18,6 +18,6 @@ class TextPart extends AbstractPart
 	 */
 	public function getContentType()
 	{
-		return $this->getGenericPart()->getContentType()->getType();
+		return $this->getPart()->getContentType()->getType();
 	}
 }

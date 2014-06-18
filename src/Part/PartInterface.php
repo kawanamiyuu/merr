@@ -6,12 +6,12 @@ namespace Merr\Part;
 interface PartInterface
 {
 	/**
-	 * @param GenericPart $part
+	 * @param Part $part
 	 */
-	public function setGenericPart(GenericPart $part);
+	public function setPart(Part $part);
 
 	/**
-	 * @return GenericPart part
+	 * @return Part part
 	 */
-	public function getGenericPart();
+	public function getPart();
 }

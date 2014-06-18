@@ -6,22 +6,22 @@ namespace Merr\Part;
 class AbstractPart implements PartInterface
 {
 	/**
-	 * @var GenericPart
+	 * @var Part
 	 */
 	private $part;
 
 	/**
-	 * @param GenericPart $part
+	 * @param Part $part
 	 */
-	public function setGenericPart(GenericPart $part)
+	public function setPart(Part $part)
 	{
 		$this->part = $part;
 	}
 
 	/**
-	 * @return GenericPart part
+	 * @return Part part
 	 */
-	public function getGenericPart()
+	public function getPart()
 	{
 		return $this->part;
 	}

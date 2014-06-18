@@ -8,7 +8,7 @@ use Merr\Header\ContentId;
 use Merr\Header\ContentTransferEncoding;
 use Merr\Header\ContentType;
 
-class GenericPart
+class Part
 {
 	/**
 	 * @var string content

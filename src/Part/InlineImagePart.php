@@ -10,7 +10,7 @@ class InlineImagePart extends AbstractPart
 	 */
 	public function getContent()
 	{
-		return $this->getGenericPart()->getContent();
+		return $this->getPart()->getContent();
 	}
 
 	/**
@@ -18,7 +18,7 @@ class InlineImagePart extends AbstractPart
 	 */
 	public function getContentType()
 	{
-		return $this->getGenericPart()->getContentType()->getType();
+		return $this->getPart()->getContentType()->getType();
 	}
 
 	/**
@@ -26,7 +26,7 @@ class InlineImagePart extends AbstractPart
 	 */
 	public function getFilename()
 	{
-		return $this->getGenericPart()->getContentDisposition()->getParameter("filename");
+		return $this->getPart()->getContentDisposition()->getParameter("filename");
 	}
 
 	/**
@@ -34,6 +34,6 @@ class InlineImagePart extends AbstractPart
 	 */
 	public function getContentId()
 	{
-		return $this->getGenericPart()->getContentId()->getId();
+		return $this->getPart()->getContentId()->getId();
 	}
 } 

@@ -135,7 +135,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function convertGenericPart_textPart()
+	public function convertPart_textPart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$parts = new ZfPart(["raw" => $raw]);
@@ -144,7 +144,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 		$alternative = $related->getPart(1);
 		$plainText = $alternative->getPart(1);
 
-		$part = ZendMailUtil::convertGenericPart($plainText);
+		$part = ZendMailUtil::convertPart($plainText);
 
 		$this->assertNotEmpty($part->getContent());
 		$this->assertEquals("text/plain", $part->getContentType()->getType());
@@ -157,7 +157,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function convertGenericPart_inlineImagePart()
+	public function convertPart_inlineImagePart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$parts = new ZfPart(["raw" => $raw]);
@@ -165,7 +165,7 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 		$related = $parts->getPart(1);
 		$inlineImagePart = $related->getPart(2);
 
-		$part = ZendMailUtil::convertGenericPart($inlineImagePart);
+		$part = ZendMailUtil::convertPart($inlineImagePart);
 
 		$this->assertNotEmpty($part->getContent());
 		$this->assertEquals("image/png", $part->getContentType()->getType());
@@ -179,14 +179,14 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function convertGenericPart_attachmentPart()
+	public function convertPart_attachmentPart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$parts = new ZfPart(["raw" => $raw]);
 
 		$attachmentPart = $parts->getPart(2);
 
-		$part = ZendMailUtil::convertGenericPart($attachmentPart);
+		$part = ZendMailUtil::convertPart($attachmentPart);
 
 		$this->assertNotEmpty($part->getContent());
 		$this->assertEquals("image/png", $part->getContentType()->getType());
@@ -200,24 +200,24 @@ class ZendMailUtilTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function convertGenericPartRecursively_singlepart()
+	public function convertPartRecursively_singlepart()
 	{
 		$raw = getTestMail("01.plain_text_ascii.eml");
 		$parts = new ZfPart(["raw" => $raw]);
 
-		$parts = ZendMailUtil::convertGenericPartRecursively($parts);
+		$parts = ZendMailUtil::convertPartRecursively($parts);
 		$this->assertCount(1, $parts);
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertGenericPartRecursively_multipart()
+	public function convertPartRecursively_multipart()
 	{
 		$raw = getTestMail("03.htmltext_inlineimage_attachment.eml");
 		$parts = new ZfPart(["raw" => $raw]);
 
-		$parts = ZendMailUtil::convertGenericPartRecursively($parts);
+		$parts = ZendMailUtil::convertPartRecursively($parts);
 		$this->assertCount(6, $parts);
 	}
 }
