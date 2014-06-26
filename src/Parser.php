@@ -76,6 +76,11 @@ class Parser
 	private $parts;
 
 	/**
+	 * @var bool
+	 */
+	private $isMultipart;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $rawMessage raw message
@@ -91,6 +96,15 @@ class Parser
 		$parts = ZendMailUtil::convertPartRecursively($zfPart);
 
 		$this->parts = new Parts($parts);
+		$this->isMultipart = $this->parts->count() > 1;
+	}
+
+	/**
+	 * @return bool true, if this is multi-part mail
+	 */
+	public function isMultipart()
+	{
+		return $this->isMultipart;
 	}
 
 	/**
