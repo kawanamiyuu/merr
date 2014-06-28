@@ -48,4 +48,12 @@ class ContentDisposition
 	{
 		return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
 	}
+
+	/**
+	 * @return array parameter values
+	 */
+	public function getParameters()
+	{
+		return $this->parameters;
+	}
 } 
